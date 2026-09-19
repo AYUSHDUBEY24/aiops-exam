@@ -1,1 +1,186 @@
-# aiops-exam
+# AIOps Practical Examination — Continuous Evaluation Lab
+
+> **Mode:** Local implementation in VS Code | **Evaluation:** Git commit history, file structure & implementation logic
+
+---
+
+## Instructions to Candidates
+
+1. This practical exam evaluates your ability to implement **end-to-end AIOps tasks locally** using VS Code.
+2. There are **NO automated online test cases** (e.g., HackerEarth style).
+3. Evaluation is strictly based on your **Git commit history**, proper **file structure**, and **implementation logic**.
+4. For every task:
+   - Write your code in the **specified file**.
+   - **Test it in the terminal**.
+   - Make an **atomic git commit** with the **specified message**.
+5. All tasks must be committed to the **`main`** branch before the submission deadline.
+
+---
+
+## Task Overview
+
+| Task | Topic | Target File | Commit Message |
+|------|-------|-------------|----------------|
+| 1 | Log Parsing & Rule-Based Anomaly Detection | `task1_log_parsing/log_analysis.py` | `feat: task 1 completed log parsing and error counter` |
+| 2 | Isolation Forest Anomaly Detection | `task2_ml_anomaly/anomaly_detection.py` | `feat: task 2 completed isolation forest outlier detection` |
+| 3 | Airflow Monitoring DAG | `task3_airflow_pipeline/aiops_dag.py` | `feat: task 3 completed airflow monitoring dag pipeline` |
+| 4 | Kafka Streaming & Monitoring | `task4_kafka_stream/kafka_pipeline.py` | `feat: task 4 completed kafka producer and consumer monitoring` |
+
+---
+
+## Repository Structure
+
+```text
+.
+├── application.log                     # Input data for Task 1
+├── README.md
+├── task1_log_parsing/
+│   └── log_analysis.py
+├── task2_ml_anomaly/
+│   └── anomaly_detection.py
+├── task3_airflow_pipeline/
+│   └── aiops_dag.py
+└── task4_kafka_stream/
+    └── kafka_pipeline.py
+```
+
+---
+
+## Task 1: Log Parsing and Rule-Based Anomaly Detection
+
+**Target File:** `task1_log_parsing/log_analysis.py`
+**Input Data File:** `application.log` (present in repository root)
+
+### Problem Description
+
+You are provided with an enterprise application log file, `application.log`.
+Write a Python script that:
+
+1. Reads all log entries **line by line**.
+2. Counts the **total number of lines** that have the `ERROR` log level.
+3. Extracts the hour-minute timestamp (`HH:MM`) from each error entry and counts the **number of errors per minute** using `collections.Counter`.
+4. Implements a **rule-based threshold alert** (`threshold = 3`): if any minute has **strictly more than 3 errors**, display an alert indicating an anomaly with the **exact minute and count**.
+
+### Expected Deliverable & Commit
+
+- Create and execute: `task1_log_parsing/log_analysis.py`
+- **Commit Message:**
+  ```
+  feat: task 1 completed log parsing and error counter
+  ```
+
+---
+
+## Task 2: Unsupervised Anomaly Detection using Isolation Forest
+
+**Target File:** `task2_ml_anomaly/anomaly_detection.py`
+
+### Problem Description
+
+A production application server has recorded telemetry response time metrics (in milliseconds) across **20 continuous sampling intervals**:
+
+```python
+response_time = [
+    120, 125, 118, 130, 122, 127, 124, 121, 129, 126,
+    123, 128, 125, 122, 131, 700, 127, 119, 650, 124
+]
+```
+```python
+cpu_usage = [
+    32, 35, 34, 36, 33, 35, 37, 34, 36, 35,
+    34, 33, 36, 35, 34, 92, 35, 33, 95, 34
+]
+```
+While standard latencies fall between **118 ms and 131 ms**, specific intervals show severe latency degradation.
+
+Write a Python script that:
+
+1. Formats the data into a **2-dimensional NumPy array** compatible with scikit-learn.
+2. Fits an `IsolationForest` estimator from `sklearn.ensemble` using `contamination=0.1` and `random_state=42`.
+3. Predicts the operational labels for each point (`1` for normal, `-1` for anomaly).
+4. Prints each value alongside its classified operational status (`NORMAL` or `ANOMALY DETECTED`).
+
+### Expected Deliverable & Commit
+
+- Create and execute: `task2_ml_anomaly/anomaly_detection.py`
+- **Commit Message:**
+  ```
+  feat: task 2 completed isolation forest outlier detection
+  ```
+
+---
+
+## Task 3: Telemetry Workflow Automation using Apache Airflow
+
+**Target File:** `task3_airflow_pipeline/aiops_dag.py`
+
+### Problem Description
+
+Define an automated monitoring DAG in Apache Airflow named **`practical2_aiops_dag`**.
+
+**DAG configuration:**
+
+| Parameter | Value |
+|-----------|-------|
+| `start_date` | September 14, 2026 |
+| `schedule` | `None` |
+| `catchup` | `False` |
+
+Using `PythonOperator`, implement **four distinct tasks**:
+
+| Task ID | Responsibility |
+|---------|----------------|
+| `collect_data` | Prints status of telemetry collection (CPU, memory, error rate). |
+| `process_data` | Prints status indicating data transformation and parsing. |
+| `detect_anomalies` | Compares a metric (e.g., `CPU = 85`) against threshold `80`, printing an alert if exceeded. |
+| `saving_results` | Prints a confirmation message that outputs are saved to the database. |
+
+Set **linear dependency orchestration** using bitshift operators:
+
+```python
+collect >> process >> detect >> saving
+```
+
+### Expected Deliverable & Commit
+
+- Create and execute: `task3_airflow_pipeline/aiops_dag.py`
+- **Commit Message:**
+  ```
+  feat: task 3 completed airflow monitoring dag pipeline
+  ```
+
+---
+
+## Task 4: Real-Time Event Streaming with Apache Kafka
+
+**Target File:** `task4_kafka_stream/kafka_pipeline.py`
+
+### Problem Description
+
+Implement real-time metric streaming and threshold monitoring using Kafka:
+
+1. Configure a **`KafkaProducer`** serializing JSON payloads to topic **`server-telemetry`**.
+2. Produce telemetry events containing `server_id`, `cpu_usage`, and `timestamp`.
+3. Configure a **`KafkaConsumer`** deserializing incoming JSON records from `server-telemetry`.
+4. Check consumed events:
+   - If `cpu_usage > 80` → output a **`CRITICAL ALERT`**
+   - Otherwise → output status **`OK`**
+
+### Expected Deliverable & Commit
+
+- Create and execute: `task4_kafka_stream/kafka_pipeline.py`
+- **Commit Message:**
+  ```
+  feat: task 4 completed kafka producer and consumer monitoring
+  ```
+
+---
+
+## Submission Checklist
+
+- [ ] Task 1 implemented, executed, and committed
+- [ ] Task 2 implemented, executed, and committed
+- [ ] Task 3 implemented, executed, and committed
+- [ ] Task 4 implemented, executed, and committed
+- [ ] One atomic commit per task, using the exact commit messages above
+- [ ] All commits pushed to the `main` branch before the deadline
